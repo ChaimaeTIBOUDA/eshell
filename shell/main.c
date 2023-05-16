@@ -1,33 +1,54 @@
 #include "main.h"
-int main(int argc, char **argv)
+int main(void)
 {
-    char *prompt = "(Shell) $";
-    char *lineptr;
-    char *lineptr_copy = NULL;
+    char *full_command;
+    char *copy_command = NULL;
     const char *delim = " \n";
     size_t n = 0;
     __ssize_t nchars_read;
-    (void)argc;
-    (void)argv;
+    //(void)argc;
+    int n_token = 0;
+    char *token;
+    int i;
+    char **argv;
 
-    while (1)
-    {
-        printf("%s", prompt);
-        nchars_read = getline(&lineptr, &n, stdin);
-        if (nchars_read == -1)
-        {
-            printf("Exiting shell ....\n");
-            return (-1);
-        }
-        printf("%s", lineptr);
-        free(lineptr);
-    }
-    lineptr_copy = malloc(sizeof(char) * nchars_read);
-    if (lineptr_copy == NULL)
+    printf("$ ");
+    nchars_read = getline(&full_command, &n, stdin);
+    printf("%s", full_command);
+    copy_command = malloc(sizeof(char) * nchars_read);
+    if (copy_command == NULL)
     {
         perror("tsh: memory allocation eroor");
         return (-1);
     }
-    stcpy(lineptr_copy, lineptr);
+    stpcpy(copy_command, full_command);
+    if (nchars_read == -1)
+    {
+        printf("Exiting shell ....\n");
+        return (-1);
+    }
+    else
+    {
+        token = strtok(full_command, delim);
+        while (token != NULL)
+        {
+            n_token++;
+            token = strtok(NULL, delim);
+        }
+        n_token++;
+        argv = malloc(sizeof(char *) * n_token);
+        token = strtok(copy_command, delim);
+        for ( i = 0; token != NULL; i++)
+        {
+            argv[i] = malloc(sizeof(char *) * strlen(token));
+            strcpy(argv[i], token);
+            token = strtok(NULL, delim);
+        } 
+        argv[i] = NULL;
+        free(argv);
+        free(full_command);
+        free(copy_command);
+
+    }
     return (0);
 }
