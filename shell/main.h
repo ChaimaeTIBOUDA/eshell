@@ -3,5 +3,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-//ssize_t getline(char **lineptr, size_t *n, FILE *stream);
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+void execmd(char **argv);
+char *get_location(char *command);
 #endif
